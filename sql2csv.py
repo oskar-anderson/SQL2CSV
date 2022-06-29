@@ -22,8 +22,8 @@ def parse_sql_insert_statement2list(line: str):
     rows = input.split("),(") # now we should have a list of strings, but the strings are unparsed SQL values
     reader = csv.reader(rows, # https://docs.python.org/2/library/csv.html#csv-fmt-params
                         delimiter=',',  # defaults to `,`, but you might need `;` or something else
-                        doublequote=False,
-                        escapechar='\\',
+                        doublequote=False, # false = if quotechar is in field it must be escaped by escapechar, True (default) = quotechar cannot be inside field 
+                        escapechar='\\', # only useful with doublequote set to False.
                         quotechar="'",
                         strict=True, # raise error on bad CSV
                         skipinitialspace=True # removes whitespace after delimiter
@@ -40,10 +40,6 @@ def parse_files():
     file_names = [x for x in file_names if x != ".gitkeep"]
     for full_file_name in file_names: 
         [file_name, extension] = os.path.splitext(full_file_name)
-        print(file_name)
-        print(extension)
-        if (extension == "gitkeep"):
-            continue
         parsed_lines = []
         with open(root + full_file_name, "r") as input_file:
             for line in input_file:
