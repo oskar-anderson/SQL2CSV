@@ -17,8 +17,8 @@ def parse_sql_insert_statement2list(line: str):
         [['1', 'Volkswagen'], ['2', 'BMW']]
     """
     input = line.partition(' VALUES ')[2] # remove string before ' VALUE '
-    input = input.rstrip(';').rstrip(')')
-    input = input.lstrip('(')
+    input = input.rstrip().rstrip(';').rstrip(')')
+    input = input.lstrip().lstrip('(')
     rows = input.split("),(") # now we should have a list of strings, but the strings are unparsed SQL values
     reader = csv.reader(rows, # https://docs.python.org/2/library/csv.html#csv-fmt-params
                         delimiter=',',  # defaults to `,`, but you might need `;` or something else
@@ -28,7 +28,10 @@ def parse_sql_insert_statement2list(line: str):
                         strict=True, # raise error on bad CSV
                         skipinitialspace=True # removes whitespace after delimiter
                         )
-    parsed_rows = [row for row in reader]
+    parsed_rows = [];
+    for (i, row) in enumerate(reader): 
+        parsed_rows.append(row)
+    # parsed_rows = [row for row in reader]
     return parsed_rows
 
 
@@ -46,7 +49,6 @@ def parse_files():
                 parsed_lines.extend(parse_sql_insert_statement2list(line))
         with open(f'./out/{file_name}.csv', 'w', newline='') as csvfile:
             writer = csv.writer(csvfile,
-                                quoting=csv.QUOTE_NONNUMERIC, 
                                 delimiter=";")
             for parsed_line in parsed_lines:
                 writer.writerow(parsed_line)
